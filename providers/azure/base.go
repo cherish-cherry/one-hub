@@ -36,6 +36,7 @@ func getAzureConfig() base.ProviderConfig {
 		AudioTranscriptions: "/audio/transcriptions",
 		AudioTranslations:   "/audio/translations",
 		ImagesGenerations:   "/images/generations",
+		ImagesEdit:          "/images/edits",
 		ChatRealtime:        "/realtime",
 		ModelList:           "isGetAzureModelList", // 在azure中该参数不参与实际url拼接，只是起到flag的作用
 		Responses:           "/responses",
