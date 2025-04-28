@@ -4,7 +4,7 @@ import { gridSpacing } from 'store/constant';
 import StatisticalLineChartCard from './component/StatisticalLineChartCard';
 import ApexCharts from 'ui-component/chart/ApexCharts';
 import SupportModels from './component/SupportModels';
-import { getLastSevenDays, generateBarChartOptions, renderChartNumber } from 'utils/chart';
+import { getDates, getLastSevenDays, generateBarChartOptions, renderChartNumber } from 'utils/chart';
 import { API } from 'utils/api';
 import { showError, calculateQuota } from 'utils/common';
 import ModelUsagePieChart from './component/ModelUsagePieChart';
@@ -13,6 +13,8 @@ import InviteCard from './component/InviteCard';
 import QuotaLogWeek from './component/QuotaLogWeek';
 import QuickStartCard from './component/QuickStartCard';
 import RPM from './component/RPM';
+import DateRangePicker from 'ui-component/DateRangePicker';
+import dayjs from 'dayjs';
 
 const Dashboard = () => {
   const [isLoading, setLoading] = useState(true);
@@ -24,20 +26,30 @@ const Dashboard = () => {
   const [modelUsageData, setModelUsageData] = useState([]);
 
   const [dashboardData, setDashboardData] = useState(null);
+  const [dateRange, setDateRange] = useState({
+    start: dayjs(getLastSevenDays()[0]),
+    end: dayjs(getLastSevenDays()[6])
+  });
 
-  const userDashboard = async () => {
+  const userDashboard = async (start, end) => {
     try {
-      const res = await API.get('/api/user/dashboard');
+      const res = await API.get('/api/user/dashboard', {
+        params: {
+          start: start.unix(),
+          end: end.unix()
+        }
+      });
       const { success, message, data } = res.data;
       if (success) {
         if (data) {
           setDashboardData(data);
-          let lineData = getLineDataGroup(data);
+          let lineData = getLineDataGroup(data, dateRange);
           setRequestChart(getLineCardOption(lineData, 'RequestCount'));
           setQuotaChart(getLineCardOption(lineData, 'Quota'));
           setTokenChart(getLineCardOption(lineData, 'PromptTokens'));
-          setStatisticalData(getBarDataGroup(data));
-          setModelUsageData(getModelUsageData(data));
+
+          setStatisticalData(getBarDataGroup(data, dateRange));
+          setModelUsageData(getModelUsageData(data, dateRange));
         }
       } else {
         showError(message);
@@ -49,8 +61,27 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    userDashboard();
-  }, []);
+    userDashboard(dateRange.start, dateRange.end);
+  }, [dateRange]);
+
+  const handleDateChange = (range) => {
+    if (!range || !range.start || !range.end) {
+      showError('Invalid date range selected.');
+      return;
+    }
+
+    const { start, end } = range;
+    const maxRange = 30; // Maximum range in days
+    if (dayjs(end).diff(dayjs(start), 'day') > maxRange) {
+      showError('The maximum date range is one month.');
+      return;
+    }
+
+    setDateRange({
+      start: dayjs(start),
+      end: dayjs(end)
+    });
+  };
 
   return (
     <Grid container spacing={gridSpacing}>
@@ -100,11 +131,19 @@ const Dashboard = () => {
       <Grid item xs={12}>
         <Grid container spacing={gridSpacing}>
           <Grid item lg={8} xs={12}>
+            <DateRangePicker
+              defaultValue={dateRange}
+              onChange={handleDateChange}
+              localeText={{ start: t('analytics_index.startTime'), end: t('analytics_index.endTime') }}
+            />
+          </Grid>
+
+          <Grid item lg={8} xs={12}>
             {/* 7日模型消费统计 */}
             <ApexCharts isLoading={isLoading} chartDatas={statisticalData} title={t('dashboard_index.week_model_statistics')} />
             <Box mt={2}>
               {/* 7日消费统计 */}
-              <QuotaLogWeek data={dashboardData} />
+              <QuotaLogWeek dateRange={dateRange} data={dashboardData} />
             </Box>
           </Grid>
 
@@ -142,7 +181,7 @@ function getModelUsageData(data) {
 }
 export default Dashboard;
 
-function getLineDataGroup(statisticalData) {
+function getLineDataGroup(statisticalData, dateRange) {
   let groupedData = statisticalData.reduce((acc, cur) => {
     if (!acc[cur.Date]) {
       acc[cur.Date] = {
@@ -159,8 +198,8 @@ function getLineDataGroup(statisticalData) {
     acc[cur.Date].CompletionTokens += cur.CompletionTokens;
     return acc;
   }, {});
-  let lastSevenDays = getLastSevenDays();
-  return lastSevenDays.map((Date) => {
+  let dates = getDates(dateRange.start, dateRange.end);
+  return dates.map((Date) => {
     if (!groupedData[Date]) {
       return {
         date: Date,
@@ -175,8 +214,8 @@ function getLineDataGroup(statisticalData) {
   });
 }
 
-function getBarDataGroup(data) {
-  const lastSevenDays = getLastSevenDays();
+function getBarDataGroup(data, dateRange) {
+  const dates = getDates(dateRange.start, dateRange.end);
   const result = [];
   const map = new Map();
   let totalCosts = 0;
@@ -187,7 +226,7 @@ function getBarDataGroup(data) {
       map.set(item.ModelName, newData);
       result.push(newData);
     }
-    const index = lastSevenDays.indexOf(item.Date);
+    const index = dates.indexOf(item.Date);
     if (index !== -1) {
       let costs = Number(calculateQuota(item.Quota, 3));
       map.get(item.ModelName).data[index] = costs;
@@ -195,8 +234,8 @@ function getBarDataGroup(data) {
     }
   }
 
-  let chartData = generateBarChartOptions(lastSevenDays, result, '美元', 3);
-  chartData.options.title.text = '7日总消费：$' + renderChartNumber(totalCosts, 3);
+  let chartData = generateBarChartOptions(dates, result, '美元', 3);
+  chartData.options.title.text = '区间总消费：$' + renderChartNumber(totalCosts, 3);
 
   return chartData;
 }

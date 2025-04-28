@@ -286,8 +286,23 @@ func GetUserDashboard(c *gin.Context) {
 
 	now := time.Now()
 	toDay := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
-	endOfDay := toDay.Add(-time.Second).Add(time.Hour * 24).Format("2006-01-02")
-	startOfDay := toDay.AddDate(0, 0, -7).Format("2006-01-02")
+	contextStartTime := c.Query("start")
+	contextEndTime := c.Query("end")
+
+	startTimestamp, _ := strconv.ParseInt(contextStartTime, 10, 64)
+	startTime := time.Unix(startTimestamp, 0)
+	startOfDay := startTime.Format("2006-01-02")
+	if len(contextStartTime) == 0 {
+		startOfDay = toDay.AddDate(0, 0, -7).Format("2006-01-02")
+	}
+
+	endTimestamp, _ := strconv.ParseInt(contextEndTime, 10, 64)
+	endTime := time.Unix(endTimestamp, 0)
+	endOfDay := endTime.Format("2006-01-02")
+
+	if len(contextEndTime) == 0 {
+		endOfDay = toDay.Add(-time.Second).Add(time.Hour * 24).Format("2006-01-02")
+	}
 
 	dashboards, err := model.GetUserModelStatisticsByPeriod(id, startOfDay, endOfDay)
 	if err != nil {

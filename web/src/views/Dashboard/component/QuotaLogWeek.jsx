@@ -2,22 +2,22 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { calculateQuota } from 'utils/common';
-import { getLastSevenDays } from 'utils/chart';
+import { getDates, getLastSevenDays } from 'utils/chart';
 import { useTranslation } from 'react-i18next';
 import SubCard from 'ui-component/cards/SubCard';
 
-const QuotaLogWeek = ({ data }) => {
+const QuotaLogWeek = ({ data, dateRange }) => {
   const [logData, setLogData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const { t } = useTranslation();
   const [isHasData, setIsHasData] = useState(false);
 
   useEffect(() => {
-    if (data) {
+    if (data && dateRange) {
       setIsHasData(true);
       // 处理数据，按日期分组
-      const lastSevenDays = getLastSevenDays();
-      const processedData = lastSevenDays
+      const dates = getDates(dateRange.start, dateRange.end);
+      const processedData = dates
         .map((date) => {
           const dayData = data.filter((item) => item.Date === date);
 
@@ -99,5 +99,6 @@ const QuotaLogWeek = ({ data }) => {
 export default QuotaLogWeek;
 
 QuotaLogWeek.propTypes = {
-  data: PropTypes.array
+  data: PropTypes.array,
+  dateRange: PropTypes.object
 };

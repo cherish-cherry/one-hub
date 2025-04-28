@@ -13,6 +13,18 @@ export function getLastSevenDays() {
   return dates;
 }
 
+export function getDates(start, end) {
+  var dates = [];
+  var current = start;
+
+  while (current.isBefore(end) || current.isSame(end)) {
+    dates.push(current.format('YYYY-MM-DD'));
+    current = current.add(1, 'day');
+  }
+
+  return dates;
+}
+
 export function getTodayDay() {
   let today = new Date();
   return today.toISOString().slice(0, 10);
