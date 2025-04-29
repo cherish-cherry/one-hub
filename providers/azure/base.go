@@ -37,6 +37,7 @@ func getAzureConfig() base.ProviderConfig {
 		AudioTranslations:   "/audio/translations",
 		ImagesGenerations:   "/images/generations",
 		ImagesEdit:          "/images/edits",
+		ImagesVariations:    "/images/variations", //azure dall-e-2 variations支持
 		ChatRealtime:        "/realtime",
 		ModelList:           "isGetAzureModelList", // 在azure中该参数不参与实际url拼接，只是起到flag的作用
 		Responses:           "/responses",
