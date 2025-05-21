@@ -1,4 +1,20 @@
 {
+  "System Logs": "System Logs",
+  "view_more_logs_on_server": "To view more system logs, please go to the server",
+  "systemInfo": "System Info",
+  "Auto Refresh": "Auto Refresh",
+  "Refresh Interval": "Refresh Interval",
+  "1 second": "1 second",
+  "3 seconds": "3 seconds",
+  "5 seconds": "5 seconds",
+  "10 seconds": "10 seconds",
+  "30 seconds": "30 seconds",
+  "1 minute": "1 minute",
+  "Max Entries": "Max Entries",
+  "Clear": "Clear",
+  "No logs available": "No logs available",
+  "No matching logs found": "No matching logs found",
+  "Search logs...": "Search logs...",
   "invite_count": "Invite Count",
   "invite_reward": "Invite Reward",
   "AZURE_OPENAI_ENDPOINT": "AZURE_OPENAI_ENDPOINT",
@@ -24,7 +40,27 @@
     "priceServerTotal": "Price Server Total",
     "updateModeAdd": "Add Only",
     "updateModeUpdate": "Update Only",
-    "updateModeOverwrite": "Overwrite All"
+    "updateModeOverwrite": "Overwrite All",
+    "added": "Add",
+    "extraRatiosAdded": "Increase the expansion rate",
+    "extraRatiosChanged": "Changes in magnification ratio",
+    "extraRatiosChanges": "Changes in magnification ratio",
+    "extraRatiosChangesTip": "Changes in magnification: {{changes}}",
+    "extraRatiosRemoved": "Remove magnification ratio",
+    "modified": "Edit",
+    "removed": "Delete"
+  },
+  "menu": {
+    "home": "Home",
+    "about": "About",
+    "status": "Status",
+    "login": "Login",
+    "signup": "Sign up",
+    "signout": "Sign out",
+    "console": "Console",
+    "error": "Error",
+    "unknownVersion": "Unknown Version",
+    "welcomeBack": "Welcome Back"
   },
   "sidebar": {
     "totalQuota": "Total Quota",
@@ -104,7 +140,30 @@
     "mapAddByJson": "Add {{name}} through JSON",
     "mapJsonInput": "JSON input",
     "listJsonError": "JSON format error, please make sure the input is in array format.",
-    "listJsonHelperText": "Please enter the JSON array format, for example: [\"item1\", \"item2\", \"item3\"]"
+    "listJsonHelperText": "Please enter the JSON array format, for example: [\"item1\", \"item2\", \"item3\"]",
+    "modelsFetched": "Models fetched successfully",
+    "selectedMappingCount": "Selected {{count}} model mappings",
+    "addMapping": "Add model mapping",
+    "addToModelMapping": "Add to model mapping",
+    "modelMapping": "Model mapping",
+    "modelMappingSettings": "Model mapping settings",
+    "prefixOrSuffix": "Prefix/Suffix",
+    "removePrefixHelp": "Enter the prefix you want to remove",
+    "removeSuffixHelp": "Enter the suffix you want to remove",
+    "addPlusSign": "Use mapping before billing",
+    "mappingPreview": "Mapping preview",
+    "removePrefix": "Remove prefix",
+    "removeSuffix": "Remove suffix",
+    "collapseList": "Collapse list",
+    "expandList": "Expand list",
+    "convertToLowercase": "Convert model names to lowercase",
+    "filterMappedModels": "Do not fill the model name before mapping.",
+    "overwriteModels": "Overwrite existing model list",
+    "overwriteModelsTip": "When enabled, the existing model list will be cleared and only the selected models will be preserved",
+    "overwriteMappings": "Overwrite existing mappings",
+    "overwriteMappingsTip": "When enabled, existing mappings will be cleared and only new mappings will be preserved",
+    "clearModels": "Reset",
+    "clearModelsTip": "Reset all selected models"
   },
   "channel_index": {
     "AzureApiVersion": "Azure version number",
@@ -224,6 +283,7 @@
     "close": "closure",
     "copyUrl": "Copy address",
     "create": "create",
+    "currency": "USD",
     "delete": "delete",
     "deleteConfirm": "Delete {{title}}?",
     "disable": "disabled",
@@ -243,6 +303,7 @@
     "processing": "Processing...",
     "registerOk": "registration success!",
     "registerTip": "The verification code was sent successfully, please check your email!",
+    "reset": "Reset",
     "saveSuccess": "Saved successfully!",
     "serverError": "Server Error",
     "show": "show",
@@ -253,7 +314,12 @@
     "verificationCode": "Verification code",
     "deleteError": "Deletion failed: {{message}}",
     "deleteSuccess": "Delete successful!",
-    "jsonFormatError": "JSON format error"
+    "jsonFormatError": "JSON format error",
+    "actions": "Operation",
+    "noDataAvailable": "No data available",
+    "pageSize": "Number of items per page",
+    "search": "Search",
+    "total": "Total"
   },
   "dashboard": "Dashboard",
   "dashboard_index": {
@@ -272,6 +338,7 @@
     "used": "Used",
     "week_model_statistics": "Model Statistics",
     "week_consumption_log": "Consumption Log",
+    "week_total_consumption": "Total Consumption",
     "7days_model_usage_pie": "Model Usage Pie",
     "date": "Date",
     "request_count": "Request Count",
@@ -285,7 +352,12 @@
     "ComparedWithYesterday": "Compared with yesterday",
     "usage": "Usage",
     "RPM": "Current RPM",
-    "TPM": "Current TPM"
+    "TPM": "Current TPM",
+    "total": "Total number",
+    "availability": "Availability",
+    "tab_status": "Status",
+    "tab_dashboard": "Dashboard",
+    "title": "Dashboard"
   },
   "description": "All-in-one OpenAI interface\nIntegrates various API access methods\nOne-click deployment, ready to use",
   "echo 映射": "echo mapping",
@@ -380,6 +452,13 @@
     "typeLabel": "Type",
     "userLabel": "User",
     "sourceIp": "Source IP",
+    "logType": {
+      "all": "All",
+      "recharge": "Recharge",
+      "consumption": "Consumption",
+      "management": "Management",
+      "system": "System"
+    },
     "content": {
       "calculate_steps": "Calculation steps:",
       "calculate_steps_tip": "PS: This system calculates based on points, and all amounts are converted from points. 1 point = $0.000002, with a minimum spending of 1 point. This calculation is for reference only; actual charges may vary.",
@@ -396,7 +475,8 @@
       "illustrate": "* This record is the log recorded before the system upgrade"
     },
     "cachedReadTokens": "Cache read Tokens (* {{ ratio }})",
-    "cachedWriteTokens": "Write tokens to cache (* {{ ratio }})"
+    "cachedWriteTokens": "Write tokens to cache (* {{ ratio }})",
+    "reasoningTokens": "Deduction Tokens (* {{ ratio }})"
   },
   "login": {
     "codeRequired": "verification code must be filled",
@@ -420,17 +500,6 @@
     "usernameRequired": "Username/Email is required",
     "wechatLoginInfo": "Please use WeChat to scan the QR code to follow the official account and enter the \"verification code\" to obtain the verification code (valid within three minutes)",
     "wechatVerificationCodeLogin": "WeChat verification code login"
-  },
-  "menu": {
-    "about": "About",
-    "console": "Console",
-    "error": "Error",
-    "home": "Home",
-    "login": "Login",
-    "signout": "Signout",
-    "signup": "Signup",
-    "unknownVersion": "Unknown Version",
-    "welcomeBack": "Welcome Back"
   },
   "midjourneyPage": {
     "channel": "Channel",
@@ -474,7 +543,17 @@
     "cached_read_tokens": "Cache Read Ratio",
     "reasoning_tokens": "Reasoning Ratio",
     "input_text_tokens": "Input text Ratio",
-    "output_text_tokens": "Output text Ratio"
+    "output_text_tokens": "Output text Ratio",
+    "all": "All",
+    "extraRatios": "Expand price",
+    "input": "Input",
+    "input_image_tokens": "Enter image magnification",
+    "noExtraRatios": "No additional charge",
+    "output": "output",
+    "output_image_tokens": "Output image magnification",
+    "price": "Price",
+    "showAll": "Show all",
+    "onlyAvailable": "Only show available"
   },
   "nova 映射": "nova mapping",
   "onyx 映射": "onyx mapping",
@@ -608,7 +687,14 @@
     "locked_title": "Lock price",
     "locked": "Locked price",
     "unlocked": "Unlocked price",
-    "lockedTip": "Price locked cannot be overridden by price updates on the server or program"
+    "lockedTip": "Price locked cannot be overridden by price updates on the server or program",
+    "completionRatio": "Completion ratio",
+    "delMultipleInfoTip": "Are you sure you want to delete the selected {{count}} prices?",
+    "extraRatios": "Extra expansion factor",
+    "noAvailableRatios": "No available extension ratio",
+    "noExtraRatios": "No additional magnification rate is available, please select to add from the drop-down menu.",
+    "promptRatio": "Leverage ratio",
+    "selectExtraRatio": "Select magnification ratio"
   },
   "profile": "Profile",
   "profilePage": {
@@ -842,6 +928,17 @@
           "placeholder": "Enter keywords, one per line"
         },
         "save": "Save Settings"
+      },
+      "claudeSettings": {
+        "budgetTokensPercentage": {
+          "label": "Default thinking token percentage",
+          "placeholder": "Please enter the default thinking token percentage."
+        },
+        "defaultMaxTokens": {
+          "label": "Default MaxToken quantity",
+          "placeholder": "Please enter the default MaxToken quantity in JSON format, where \"default\" represents the default value. For example: {\"default\": 1000, \"claude-3-7-sonnet-latest\": 128000}"
+        },
+        "save": "Save Claude's settings"
       }
     },
     "otherSettings": {
@@ -1088,7 +1185,11 @@
     "usedQuota": "Used Quota",
     "userGroup": "group",
     "apiRate": "",
-    "apiRateTip": ""
+    "apiRateTip": "",
+    "heartbeat": "Heartbeat setting (Experimental)",
+    "heartbeatTip": "Heartbeat setting means that when you make a stream request, if there is no response for a long time, your client may disconnect due to the timeout mechanism. To prevent this, you can enable the heartbeat setting. When the request exceeds the start time you set and there is no response, we will send a heartbeat request every 5 seconds to keep the connection. Note: If you are using a relay program, please do not enable this setting, it may cause unexpected issues.",
+    "heartbeatTimeout": "Heartbeat start time (unit: seconds)",
+    "heartbeatTimeoutHelperText": "Minimum value: 30 seconds, maximum value: 90 seconds"
   },
   "topup": "Top-up",
   "topupCard": {
@@ -1134,6 +1235,12 @@
     "name": "Name",
     "nameTip": "Name for users",
     "public": "Is it public?",
+    "promotion": "Auto Upgrade",
+    "promotionTip": "When enabled, users will automatically upgrade to this group when their recharge amount meets the min-max conditions.",
+    "min": "Min Amount",
+    "minTip": "Minimum recharge amount required for auto upgrade.",
+    "max": "Max Amount",
+    "maxTip": "Maximum recharge amount for this group level.",
     "ratio": "magnification",
     "symbol": "Identification",
     "symbolTip": "The label is used to distinguish user groups, please use English and do not repeat.",
@@ -1309,6 +1416,17 @@
                 "5是错误的": ""
               }
             }
+          },
+          "__i18n_ally_root__": {
+            "__i18n_ally_root__": {
+              "5*，表示支持所有gpt-3": {
+                "5开头的模型，*号只能在最后一位使用，前面必须有字符，例如：gpt-3": {
+                  "5*是正确的，*gpt-3": {
+                    "5是错误的": ""
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -1319,7 +1437,12 @@
       "com/freeapi/chat/completions,如果需要禁用版本号，请输入 disable": "",
       "__i18n_ally_root__": {
         "__i18n_ally_root__": {
-          "com/freeapi/chat/completions,如果需要禁用版本号，请输入 disable": ""
+          "com/freeapi/chat/completions,如果需要禁用版本号，请输入 disable": "",
+          "__i18n_ally_root__": {
+            "__i18n_ally_root__": {
+              "com/freeapi/chat/completions,如果需要禁用版本号，请输入 disable": ""
+            }
+          }
         }
       }
     }

@@ -150,8 +150,6 @@ var SMTPAccount = ""
 var SMTPFrom = ""
 var SMTPToken = ""
 
-var ExtraTokenPriceJson = ""
-
 var ChatImageRequestProxy = ""
 
 var GitHubProxy = ""
@@ -204,6 +202,10 @@ var BatchUpdateEnabled = false
 var BatchUpdateInterval = 5
 
 var MCP_ENABLE = false
+
+var UPTIMEKUMA_ENABLE = false
+var UPTIMEKUMA_DOMAIN = ""
+var UPTIMEKUMA_STATUS_PAGE_NAME = ""
 
 // Gemini
 var GeminiAPIEnabled = true
@@ -260,13 +262,13 @@ const (
 	ChannelTypePaLM = 11
 	// ChannelTypeAPI2GPT        = 12
 	// ChannelTypeAIGC2D         = 13
-	ChannelTypeAnthropic = 14
-	ChannelTypeBaidu     = 15
-	ChannelTypeZhipu     = 16
-	ChannelTypeAli       = 17
-	ChannelTypeXunfei    = 18
-	ChannelType360       = 19
-	// ChannelTypeOpenRouter = 20
+	ChannelTypeAnthropic  = 14
+	ChannelTypeBaidu      = 15
+	ChannelTypeZhipu      = 16
+	ChannelTypeAli        = 17
+	ChannelTypeXunfei     = 18
+	ChannelType360        = 19
+	ChannelTypeOpenRouter = 20
 	// ChannelTypeAIProxyLibrary = 21
 	// ChannelTypeFastGPT        = 22
 	ChannelTypeTencent      = 23
