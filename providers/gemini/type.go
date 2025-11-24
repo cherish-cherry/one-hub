@@ -72,6 +72,9 @@ type GeminiPart struct {
 	ExecutableCode      *GeminiPartExecutableCode      `json:"executableCode,omitempty"`
 	CodeExecutionResult *GeminiPartCodeExecutionResult `json:"codeExecutionResult,omitempty"`
 	Thought             bool                           `json:"thought,omitempty"` // 是否是思考内容
+	ThoughtSignature    json.RawMessage                `json:"thoughtSignature,omitempty"`
+	MediaResolution     json.RawMessage                `json:"mediaResolution,omitempty"`
+	VideoMetadata       json.RawMessage                `json:"videoMetadata,omitempty"`
 }
 
 type GeminiPartExecutableCode struct {
@@ -148,6 +151,14 @@ func (candidate *GeminiChatCandidate) ToOpenAIStreamChoice(request *types.ChatCo
 
 	if len(images) > 0 {
 		choice.Delta.Image = images
+	}
+
+	// Add grounding metadata as markdown citations
+	if candidate.GroundingMetadata != nil && showGoogleSearchMeta(request) {
+		groundingMarkdown := formatGroundingMetadataAsMarkdown(candidate.GroundingMetadata)
+		if groundingMarkdown != "" {
+			content = append(content, "\n\n"+groundingMarkdown)
+		}
 	}
 
 	choice.Delta.Content = strings.Join(content, "\n")
@@ -230,6 +241,18 @@ func (candidate *GeminiChatCandidate) ToOpenAIChoice(request *types.ChatCompleti
 
 	choice.Message.Content = strings.Join(content, "\n")
 
+	// Add grounding metadata as markdown citations
+	if candidate.GroundingMetadata != nil && showGoogleSearchMeta(request) {
+		groundingMarkdown := formatGroundingMetadataAsMarkdown(candidate.GroundingMetadata)
+		if groundingMarkdown != "" {
+			if contentStr, ok := choice.Message.Content.(string); ok && contentStr != "" {
+				choice.Message.Content = contentStr + "\n\n" + groundingMarkdown
+			} else {
+				choice.Message.Content = groundingMarkdown
+			}
+		}
+	}
+
 	if len(reasoningContent) > 0 {
 		choice.Message.ReasoningContent = strings.Join(reasoningContent, "\n")
 	}
@@ -248,8 +271,12 @@ func (candidate *GeminiChatCandidate) ToOpenAIChoice(request *types.ChatCompleti
 }
 
 type GeminiFunctionResponse struct {
-	Name     string `json:"name,omitempty"`
-	Response any    `json:"response,omitempty"`
+	Name         string          `json:"name,omitempty"`
+	Response     any             `json:"response,omitempty"`
+	WillContinue json.RawMessage `json:"willContinue,omitempty"`
+	Scheduling   json.RawMessage `json:"scheduling,omitempty"`
+	Parts        json.RawMessage `json:"parts,omitempty"`
+	ID           json.RawMessage `json:"id,omitempty"`
 }
 
 type GeminiFunctionResponseContent struct {
@@ -365,6 +392,7 @@ type GeminiChatCandidate struct {
 	CitationMetadata      any                      `json:"citationMetadata,omitempty"`
 	TokenCount            int                      `json:"tokenCount,omitempty"`
 	GroundingAttributions []any                    `json:"groundingAttributions,omitempty"`
+	GroundingMetadata     *GeminiGroundingMetadata `json:"groundingMetadata,omitempty"`
 	AvgLogprobs           any                      `json:"avgLogprobs,omitempty"`
 }
 
@@ -620,4 +648,68 @@ type GeminiImagePrediction struct {
 func isEmptyOrOnlyNewlines(s string) bool {
 	trimmed := strings.TrimSpace(s)
 	return trimmed == ""
+}
+
+type GeminiGroundingMetadata struct {
+	GroundingChunks  []GeminiGroundingChunk `json:"groundingChunks,omitempty"`
+	WebSearchQueries []string               `json:"webSearchQueries,omitempty"`
+}
+
+type GeminiGroundingChunk struct {
+	Web *GeminiGroundingChunkWeb `json:"web,omitempty"`
+}
+
+type GeminiGroundingChunkWeb struct {
+	Uri   string `json:"uri,omitempty"`
+	Title string `json:"title,omitempty"`
+}
+
+// checks if googleSearch tool has "show" parameter
+func showGoogleSearchMeta(request *types.ChatCompletionRequest) bool {
+	functions := request.GetFunctions()
+	if functions == nil {
+		return false
+	}
+
+	for _, function := range functions {
+		if function.Name == "googleSearch" && function.Parameters != nil {
+			if paramStr, ok := function.Parameters.(string); ok && paramStr == "show" {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
+// formats grounding metadata as markdown citation
+func formatGroundingMetadataAsMarkdown(metadata *GeminiGroundingMetadata) string {
+	if metadata == nil || len(metadata.GroundingChunks) == 0 {
+		return ""
+	}
+	var result strings.Builder
+	// Add search queries
+	if len(metadata.WebSearchQueries) > 0 {
+		result.WriteString("> Searched ")
+		for i, query := range metadata.WebSearchQueries {
+			if i > 0 {
+				result.WriteString(" and ")
+			}
+			result.WriteString(fmt.Sprintf(`"%s"`, query))
+		}
+		result.WriteString("\n")
+	}
+	// Add grounding chunks as numbered list
+	linkCount := 0
+	for _, chunk := range metadata.GroundingChunks {
+		if chunk.Web != nil && chunk.Web.Uri != "" {
+			linkCount++
+			title := chunk.Web.Title
+			if title == "" {
+				title = chunk.Web.Uri
+			}
+			result.WriteString(fmt.Sprintf("> %d. [%s](%s)\n", linkCount, title, chunk.Web.Uri))
+		}
+	}
+	return result.String()
 }
